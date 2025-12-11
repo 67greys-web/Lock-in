@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Life Improvement — Daily Plan</title>
+  <meta name="description" content="Generate a daily workout, meal, productivity tip & motivation. Black & Gold app-style generator." />
+
+  <!-- ===== COLORS =====
+       Black & Gold theme:
+       - background: #0b0b0b (near-black)
+       - card: #0f0f0f
+       - gold: #D4AF37
+       - muted gold: #C8A842
+  -->
+  <style>
+    :root{
+      --bg: #0b0b0b;
+      --card: #0f0f0f;
+      --gold: #D4AF37;
+      --gold-2: #C8A842;
+      --muted: #bfbfbf;
+      --glass: rgba(255,255,255,0.03);
+      --radius: 14px;
+      --maxw: 980px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,var(--bg) 0%, #070707 100%);
+      color: #fff;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding: 28px 16px;
+      display:flex;
+      justify-content:center;
+    }
+
+    .app {
+      width:100%;
+      max-width: var(--maxw);
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:18px;
+      align-items:start;
+    }
+
+    /* header */
+    .header {
+      background: linear-gradient(180deg,var(--card), rgba(255,255,255,0.02));
+      padding: 18px;
+      border-radius: calc(var(--radius) + 6px);
+      display:flex;
+      gap:12px;
+      align-items:center;
+      box-shadow: 0 6px 30px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+    }
+    .logo {
+      width:64px;
+      height:64px;
+      border-radius:12px;
+      background: linear-gradient(135deg,var(--gold),var(--gold-2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#0b0b0b;
+      font-weight:700;
+      font-size:20px;
+      box-shadow: 0 6px 18px rgba(212,175,55,0.14);
+      flex-shrink:0;
+    }
+    .header .title {
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+    .title h1{margin:0;font-size:18px;letter-spacing:0.2px}
+    .title p{margin:0;color:var(--muted);font-size:13px}
+
+    /* main card */
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius: var(--radius);
+      padding:18px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+      border: 1px solid rgba(212,175,55,0.06);
+    }
+
+    .flex-row{
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    .big-btn{
+      background:linear-gradient(90deg,var(--gold),var(--gold-2));
+      color:#0b0b0b;
+      padding:14px 18px;
+      border-radius:12px;
+      font-weight:700;
+      border:none;
+      cursor:pointer;
+      font-size:16px;
+      box-shadow: 0 8px 30px rgba(200,160,40,0.12);
+      transition: transform .12s ease, opacity .12s ease;
+    }
+    .big-btn:active{transform:translateY(2px)}
+    .secondary {
+      background:transparent;
+      color:var(--muted);
+      border:1px solid rgba(255,255,255,0.03);
+      padding:10px 12px;
+      border-radius:10px;
+      cursor:pointer;
+    }
+
+    /* output layout */
+    .output-grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+      margin-top:16px;
+    }
+    .section {
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+      padding:14px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,0.02);
+    }
+    .section h3{margin:0 0 8px 0;color:var(--gold);font-size:15px}
+    .section p{margin:0;color:var(--muted);font-size:15px}
+
+    /* meal rating */
+    .rating-row{display:flex;gap:8px;align-items:center;margin-top:10px}
+    .star{
+      width:36px;height:36px;border-radius:8px;background:var(--glass);display:inline-flex;align-items:center;justify-content:center;color:var(--gold);
+      font-weight:700;font-size:18px;cursor:pointer;border:1px solid rgba(255,255,255,0.02);
+    }
+    .star.selected{background:linear-gradient(90deg,var(--gold),var(--gold-2));color:#0b0b0b; box-shadow: 0 6px 18px rgba(200,160,40,0.12)}
+
+    .small {font-size:13px;color:var(--muted)}
+
+    /* ad & donate */
+    .ad-box{
+      margin-top:12px;
+      background:linear-gradient(90deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
+      border:1px dashed rgba(212,175,55,0.08);
+      padding:12px;border-radius:10px;text-align:center;color:var(--muted)
+    }
+    .donate{
+      display:inline-flex;gap:8px;align-items:center;padding:8px 12px;border-radius:10px;background:rgba(212,175,55,0.08);color:var(--gold);font-weight:600;border:1px solid rgba(212,175,55,0.06);text-decoration:none;
+    }
+
+    /* footer */
+    footer{margin-top:8px;color:var(--muted);font-size:13px;text-align:center}
+
+    /* responsive */
+    @media(min-width:900px){
+      .app{grid-template-columns: 1fr 360px}
+      .output-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <main class="app" role="main">
+    <!-- LEFT: main generator -->
+    <section class="card" id="mainCard" aria-label="Daily plan generator">
+      <div class="header">
+        <!-- logo slot - replace with your SVG or image if you want -->
+        <div class="logo" title="Logo">
+          <!-- LOGO PLACEHOLDER: change text or replace whole div with <img src="logo.png" /> -->
+          LI
+        </div>
+        <div class="title">
+          <h1>Daily Plan Generator</h1>
+          <p class="small">One click → workout, meal, tip & motivation</p>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+          <button class="secondary" id="shareBtn">Share</button>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <button class="big-btn" id="generateBtn" aria-label="Generate daily plan">Generate Plan</button>
+        <button class="secondary" id="randomizeBtn" title="Get a new quote only">New Quote</button>
+        <button class="secondary" id="clearRatings">Reset Ratings</button>
+      </div>
+
+      <div class="output-grid" id="outputGrid">
+        <div class="section" id="workoutSection">
+          <h3>Workout</h3>
+          <p id="workoutText">Press Generate to get a workout.</p>
+        </div>
+
+        <div class="section" id="mealSection">
+          <h3>Meal</h3>
+          <p id="mealText">Press Generate to get a meal suggestion.</p>
+
+          <div class="rating-row small" aria-label="Meal rating">
+            <div>Rate this meal:</div>
+            <div id="stars" style="display:flex;gap:8px;margin-left:8px"></div>
+            <div id="ratingAvg" style="margin-left:auto" class="small">Avg: -</div>
+          </div>
+        </div>
+
+        <div class="section" id="tipSection">
+          <h3>Productivity Tip</h3>
+          <p id="tipText">Press Generate to get a tip.</p>
+        </div>
+
+        <div class="section" id="quoteSection">
+          <h3>Motivation</h3>
+          <p id="quoteText">Press Generate to get a motivational quote.</p>
+        </div>
+
+        <div class="section" id="extras">
+          <h3>Extras</h3>
+          <p class="small">Share this page, donate, or check out affiliate gear below.</p>
+
+          <!-- AdSense placeholder: replace this with your AdSense code.
+               To add AdSense, create an ad unit in Google AdSense and paste the <ins class="adsbygoogle"...> block here.
+               IMPORTANT: AdSense may require an HTTPS site and review before serving ads. -->
+          <div class="ad-box" id="adPlaceholder">
+            <!-- === ADSENSE PLACEHOLDER === -->
+            <div style="font-weight:700;color:var(--gold)">Ad placeholder</div>
+            <div class="small">Replace this div with your AdSense code (or other ad network).</div>
+          </div>
+
+          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+            <!-- Affiliate / sell button -->
+            <a href="#" class="secondary" id="shopBtn" title="Affiliate / product link">Shop recommendations</a>
+
+            <!-- Donate example (Cash App) -->
+            <a href="https://cash.app/$YOURCASHTAG" class="donate" id="donateBtn" target="_blank" rel="noopener noreferrer">
+              Donate • Cash App
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT: info / stats / history -->
+    <aside class="card" aria-label="History and settings">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div>
+          <h3 style="margin:0 0 8px 0;color:var(--gold)">Recent Plans</h3>
+          <div id="history" class="small" style="max-height:260px;overflow:auto;padding:8px;background:rgba(255,255,255,0.01);border-radius:8px"></div>
+        </div>
+
+        <div>
+          <h3 style="margin:0 0 8px 0;color:var(--gold)">Settings</h3>
+          <div style="display:flex;gap:8px;flex-direction:column">
+            <label class="small"><input type="checkbox" id="autoCopy" /> Auto-copy plan to clipboard</label>
+            <label class="small"><input type="checkbox" id="compactMode" /> Compact output</label>
+            <label class="small">Name your logo file: <input id="logoFilename" placeholder="logo.png" style="width:100%;margin-top:6px;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:var(--muted)" /></label>
+          </div>
+        </div>
+
+        <div class="small" style="margin-top:auto">
+          <strong>Pro tips:</strong>
+          <ul style="padding-left:18px;margin:6px 0 0 0">
+            <li>Put AdSense code in the ad placeholder to monetize.</li>
+            <li>Use GitHub Pages + a custom domain to look more professional.</li>
+            <li>Share on socials & embed your YouTube for traffic.</li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+
+    <footer style="grid-column:1/-1">Made with ⚡ — Black & Gold theme — Works on GitHub Pages</footer>
+  </main>
+
+  <script>
+    /***********************
+     * DATA (customize these arrays)
+     ***********************/
+    const workouts = [
+      "20-minute jog + 25 push-ups + 30 squats",
+      "10-minute warmup + 20-minute HIIT session",
+      "1-mile run + 3 sets of 12 dumbbell rows",
+      "30-minute basketball solo drills (shooting + footwork)",
+      "30-minute bike ride + core circuit (plank 1 min, 2x)"
+    ];
+
+    const meals = [
+      {name: "Grilled chicken + rice + steamed broccoli", tags: ["protein","balanced"]},
+      {name: "Protein shake (banana, milk, whey) + whole grain toast", tags:["quick","breakfast"]},
+      {name: "Turkey wrap with lettuce, tomato + side fruit", tags:["lunch","light"]},
+      {name: "Baked salmon + sweet potato + green beans", tags:["dinner","omega3"]},
+      {name: "Beef & veggie bowl with brown rice", tags:["hearty","dinner"]}
+    ];
+
+    const tips = [
+      "Set one 2-hour no-phone block and do deep work.",
+      "Write down your top 3 goals for the day and stick to them.",
+      "Use a timer (25/5) and commit to one timer cycle now.",
+      "Declutter your workspace for 5 minutes — immediate focus boost.",
+      "Plan your toughest task first; ride the morning energy."
+    ];
+
+    const quotes = [
+      "Success is earned, not given.",
+      "Small steps every day lead to big change.",
+      "Discipline wins when motivation fades.",
+      "Don't stop when you're tired — stop when you're done.",
+      "Your future is built by what you do today."
+    ];
+
+    /***********************
+     * UTIL
+     ***********************/
+    const el = id => document.getElementById(id);
+    const rand = arr => arr[Math.floor(Math.random()*arr.length)];
+    const historyKey = "li_history_v1";
+    const ratingKey = "li_ratings_v1"; // store {mealName: {sum: X, count: Y}}
+
+    /***********************
+     * RENDER / GENERATE
+     ***********************/
+    function generatePlan() {
+      const w = rand(workouts);
+      const m = rand(meals);
+      const t = rand(tips);
+      const q = rand(quotes);
+
+      el("workoutText").textContent = w;
+      el("mealText").textContent = m.name;
+      el("tipText").textContent = t;
+      el("quoteText").textContent = q;
+
+      pushHistory({workout:w, meal:m.name, tip:t, quote:q, when: new Date().toLocaleString()});
+      loadRatings(); // update average display
+
+      // auto copy if setting enabled
+      if (el("autoCopy").checked) {
+        copyPlanToClipboard(`${w}\n${m.name}\n${t}\n${q}`);
+      }
+    }
+
+    document.getElementById("generateBtn").addEventListener("click", generatePlan);
+    document.getElementById("randomizeBtn").addEventListener("click", () => {
+      el("quoteText").textContent = rand(quotes);
+    });
+
+    // share button
+    document.getElementById("shareBtn").addEventListener("click", () => {
+      const page = location.href;
+      if (navigator.share) {
+        navigator.share({title:"Daily Plan Generator", text:"Check this out!", url: page}).catch(()=>{});
+      } else {
+        copyText(page);
+        alert("Link copied to clipboard. Share it anywhere!");
+      }
+    });
+
+    // copy utility
+    function copyText(t){
+      navigator.clipboard?.writeText(t).catch(()=>{});
+    }
+    function copyPlanToClipboard(text) {
+      copyText(text);
+    }
+
+    /***********************
+     * HISTORY (localStorage)
+     ***********************/
+    function pushHistory(item) {
+      let h = JSON.parse(localStorage.getItem(historyKey) || "[]");
+      h.unshift(item);
+      if (h.length>30) h = h.slice(0,30);
+      localStorage.setItem(historyKey, JSON.stringify(h));
+      renderHistory();
+    }
+    function renderHistory(){
+      const h = JSON.parse(localStorage.getItem(historyKey) || "[]");
+      const container = el("history");
+      if (!h.length) { container.innerHTML = "<div class='small'>No plans yet — press Generate.</div>"; return; }
+      container.innerHTML = h.map(it => `<div style="padding:8px;border-bottom:1px solid rgba(255,255,255,0.02);margin-bottom:6px">
+        <div style="font-weight:700;color:var(--gold)">${it.meal}</div>
+        <div class="small" style="color:var(--muted)">${it.workout}</div>
+        <div class="small" style="margin-top:6px;color:var(--muted)">${it.when}</div>
+      </div>`).join("");
+    }
+    renderHistory();
+
+    /***********************
+     * RATING SYSTEM
+     ***********************/
+    // render stars
+    (function initStars(){
+      const starsDiv = el("stars");
+      starsDiv.innerHTML = "";
+      for(let i=1;i<=5;i++){
+        const s = document.createElement("div");
+        s.className = "star";
+        s.textContent = i;
+        s.setAttribute("role","button");
+        s.setAttribute("aria-label", `${i} stars`);
+        s.dataset.value = i;
+        s.addEventListener("click", onRate);
+        s.addEventListener("mouseover", ()=>highlightStars(i));
+        s.addEventListener("mouseout", ()=>highlightStars(0));
+        starsDiv.appendChild(s);
+      }
+      loadRatings();
+    })();
+
+    function highlightStars(n){
+      const nodes = document.querySelectorAll("#stars .star");
+      nodes.forEach((el, idx)=> {
+        const val = idx+1;
+        if (n && val<=n) el.classList.add("selected");
+        else el.classList.remove("selected");
+      });
+    }
+
+    function onRate(e){
+      const v = Number(e.currentTarget.dataset.value);
+      const meal = el("mealText").textContent || "Unrated meal";
+      const data = JSON.parse(localStorage.getItem(ratingKey) || "{}");
+      if (!data[meal]) data[meal] = {sum:0, count:0};
+      data[meal].sum += v;
+      data[meal].count += 1;
+      localStorage.setItem(ratingKey, JSON.stringify(data));
+      loadRatings();
+      alert(`Thanks! You rated "${meal}" ${v} star${v>1?"s":""}.`);
+    }
+
+    function loadRatings(){
+      const meal = el("mealText").textContent || "Unrated meal";
+      const data = JSON.parse(localStorage.getItem(ratingKey) || "{}");
+      const ratingEl = el("ratingAvg");
+      if (data[meal]) {
+        const avg = (data[meal].sum / data[meal].count);
+        ratingEl.textContent = `Avg: ${avg.toFixed(1)} (${data[meal].count})`;
+      } else {
+        ratingEl.textContent = "Avg: -";
+      }
+    }
+
+    // reset ratings
+    document.getElementById("clearRatings").addEventListener("click", ()=> {
+      if (confirm("Clear all stored ratings? This will remove all saved rating data.")) {
+        localStorage.removeItem(ratingKey);
+        loadRatings();
+      }
+    });
+
+    /***********************
+     * SETTINGS persistence for two toggles
+     ***********************/
+    // save settings
+    ['autoCopy','compactMode','logoFilename'].forEach(id=>{
+      const elmt = document.getElementById(id);
+      // restore
+      const val = localStorage.getItem("li_setting_"+id);
+      if (val !== null) {
+        if (elmt.type === 'checkbox') elmt.checked = val === "1";
+        else elmt.value = val;
+      }
+      // listen
+      elmt.addEventListener('change', ()=>{
+        if (elmt.type === 'checkbox') localStorage.setItem("li_setting_"+id, elmt.checked ? "1" : "0");
+        else localStorage.setItem("li_setting_"+id, elmt.value);
+      });
+    });
+
+    /***********************
+     * Clear history (for dev)
+     ***********************/
+    // helpful: clear history on long-press logo (hidden dev feature)
+    (function devClearOnLongLogo(){
+      let t = 0, timer = null;
+      const logo = document.querySelector('.logo');
+      logo.addEventListener('mousedown', ()=> {
+        timer = setTimeout(()=> {
+          if (confirm("Clear history and ratings?")) {
+            localStorage.removeItem(historyKey);
+            localStorage.removeItem(ratingKey);
+            renderHistory();
+            loadRatings();
+            alert("Cleared.");
+          }
+        }, 900);
+      });
+      ['mouseup','mouseleave'].forEach(ev=>logo.addEventListener(ev, ()=> clearTimeout(timer)));
+    })();
+
+    /***********************
+     * Helpers & first-run
+     ***********************/
+    function init() {
+      // show a sample plan on first load
+      if (!localStorage.getItem(historyKey)) {
+        generatePlan();
+      } else {
+        renderHistory();
+        loadRatings();
+      }
+    }
+    init();
+  </script>
+</body>
+</html>
